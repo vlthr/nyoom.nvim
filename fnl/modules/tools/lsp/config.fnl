@@ -1,6 +1,7 @@
-(import-macros {: nyoom-module-p!} :macros)
-(local lsp (require :lspconfig))
-(local {: deep-merge} (require :core.tables))
+(import-macros {: nyoom-module-p! : packadd!} :macros)
+(local {: autoload} (require :core.lib.autoload))
+(local lsp (autoload :lspconfig))
+(local {: deep-merge} (autoload :core.lib.tables))
 (local install-root-dir (.. (vim.fn.stdpath :data) :mason))
 (fn concat [path-components]
   (table.concat path-components "/"))

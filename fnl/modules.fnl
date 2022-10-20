@@ -4,17 +4,18 @@
 ;; NOTE: Any module with a TODO either isn't ready or hasn't been implemented yet.
 (nyoom! :completion
         cmp                  ; the ultimate code completion backend
-        ;;compleet           ; TODO the *other* ultimate code completion backend
+        ;;compleet           ; FIXME the *other* ultimate code completion backend
+        copilot              ; the code completion of the future
         ;;fzf-lua            ; TODO a search engine for love and life
         (telescope 
           +native 
           +zf-native 
-          +frecency)  ; the search engine of the future
+          +frecency))  ; the search engine of the future
 
-        :ui
-        nyoom                ; what makes Nyoom look the way it does
+(nyoom! :ui
+        (nyoom +modes)       ; what makes Nyoom look the way it does
         dashboard            ; a nifty splash screen for neovim
-        ;;nyoom-quit         ; buggy, terrible implementation of doom-quit. 
+        ;;nyoom-quit         ; WIP: buggy, terrible implementation of doom-quit. 
         hydra                ; the heads don't byte
         ;;indent-guides      ; highlighted indent columns
         modeline             ; snazzy, nano-emacs-inspired modeline
@@ -39,7 +40,7 @@
 
 (nyoom! :term
         ;;fshell            ; WIP: the fennel shell that works everywhere
-        toggleterm)        ; persistant/floating terminal wrapper for :term
+        toggleterm)         ; persistant/floating terminal wrapper for :term
 
 (nyoom! :checkers
         syntax)              ; tasing you for every semicolon you forget
@@ -69,7 +70,7 @@
         ;;java               ; the poster child for carpal tunnel syndrome
         ;;julia              ; a better, faster MATLAB
         ;;kotlin             ; a better, slicker Java(Script)
-        ;;latex              ; writing papers in Emacs has never been so fun
+        ;;latex              ; writing papers in Neovim has never been so fun
         lua                  ; one-based indices? one-based indices
         markdown             ; writing docs for people to ignore
         ;;nim                ; python + lisp at the speed of c
@@ -84,3 +85,8 @@
 (nyoom! :config
         (default +bindings +smartparens))
         ;;literate           ; literate configurations for neovim
+
+
+(nyoom! :app
+        calendar)
+        ;;spotify

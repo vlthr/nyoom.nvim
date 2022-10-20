@@ -1,9 +1,10 @@
 (import-macros {: packadd! : map! : nyoom-module-p!} :macros)
-(local {: setup : load_extension} (require :telescope))
+(local {: autoload} (require :core.lib.autoload))
+(local {: setup : load_extension} (autoload :telescope))
 
 (fn fb-action [action]
   (fn [buf_nr]
-   (local fb-actions (. (require :telescope) :extensions :file_browser :actions))
+   (local fb-actions (. (autoload :telescope) :extensions :file_browser :actions))
    ((. fb-actions action) buf_nr)))
 
 (local file-browser-opts {:quiet false
@@ -69,17 +70,17 @@
                                                        :*/__pycache__/*]
                                      :show_scores false
                                      :show_unindexed true
-                                     :workspaces (. (require :vt.projects)
+                                     :workspaces (. (autoload :vt.projects)
                                                     :frecency_workspaces)
                                      :disable_devicons false}
                           :live_grep_args {:mappings {:i {:<C-l>g (fn []
-                                                                    ((. (require :telescope-live-grep-args.actions)
+                                                                    ((. (autoload :telescope-live-grep-args.actions)
                                                                         :quote_prompt) {:postfix " --iglob "}))
                                                           :<C-q> (fn []
-                                                                   ((. (require :telescope-live-grep-args.actions)
+                                                                   ((. (autoload :telescope-live-grep-args.actions)
                                                                        :quote_prompt)))
                                                           :<C-l>t (fn []
-                                                                    ((. (require :telescope-live-grep-args.actions)
+                                                                    ((. (autoload :telescope-live-grep-args.actions)
                                                                         :quote_prompt) {:postfix " -t"}))}}
                                            :auto_quoting false}
                           :fzy_native {:override_file_sorter false
@@ -94,11 +95,11 @@
                                                 :match_filename false
                                                 :highlight_results true}}}
              :pickers {:git_files {:attach_mappings (fn [_ map] 
-                                                      (local actions (require :telescope.actions))
-                                                      (local action_state (require :telescope.actions.state))
+                                                      (local actions (autoload :telescope.actions))
+                                                      (local action_state (autoload :telescope.actions.state))
                                                       ;; attach_mappings doesn't octually override here
                                                       (actions.select_default:replace (fn [prompt_bufnr]
-                                                                                       (local action_state (require :telescope.actions.state))
+                                                                                       (local action_state (autoload :telescope.actions.state))
                                                                                        (local selected (action_state.get_selected_entry))
                                                                                        (when (not (= nil selected))
                                                                                          (actions.close prompt_bufnr)
@@ -151,7 +152,7 @@
             :lsp_references open-ref-float!
             :diagnostics open-diag-float!
             :lsp_document_symbols open-local-symbol-float!
-            :lsp_workspace_symbols open-workspace-symbol-float!} (require :telescope.builtin))
+            :lsp_workspace_symbols open-workspace-symbol-float!} (autoload :telescope.builtin))
     (map! [n] "<leader>li" open-impl-float!)
     (map! [n] "<leader>lr" open-ref-float!)
     (map! [n] "<leader>ls" open-local-symbol-float!)
@@ -159,6 +160,6 @@
 
 (nyoom-module-p! syntax
   (do
-    (local {:diagnostics open-diag-float!} (require :telescope.builtin))
+    (local {:diagnostics open-diag-float!} (autoload :telescope.builtin))
     (map! [n] "<leader>ld" '(open-diag-float! {:bufnr 0}))
     (map! [n] "<leader>lD" open-diag-float!)))
