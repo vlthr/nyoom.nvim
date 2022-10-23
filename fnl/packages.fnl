@@ -14,6 +14,7 @@
 (echo! "Initiating Packer")
 (let [packer (require :packer)]
    (packer.init {:git {:clone_timeout 300}
+                 :max_jobs 50 ;; packer can reach MacOS open file limit (alternatively, override with ulimit -S -n 40000)
                  :compile_path (.. (vim.fn.stdpath :config) "/lua/packer_compiled.lua")
                  :auto_reload_compiled false
                  :display {:non_interactive non-interactive}}))
