@@ -1,5 +1,6 @@
 (import-macros {: nyoom-module-p!} :macros)
 (local lsp (require :lspconfig))
+(local {: deep-merge} (require :core.tables))
 
 ;;; Improve UI
 (set vim.lsp.handlers.textDocument/signatureHelp
@@ -56,45 +57,45 @@
                  :flags {:debounce_text_changes 150}})
 
 ;; conditional lsp servesr
-(local lsp-servers [])
+(local lsp-servers {})
 
 (nyoom-module-p! clojure
-  (table.insert lsp-servers :clojure-lsp))
+  (tset lsp-servers :clojure-lsp {}))
 
 (nyoom-module-p! java
-  (table.insert lsp-servers :jdtls))
+  (tset lsp-servers :jdtls {}))
 
 (nyoom-module-p! sh
-  (table.insert lsp-servers :bashls))
+  (tset lsp-servers :bashls {}))
 
 (nyoom-module-p! julia
-  (table.insert lsp-servers :julials))
+  (tset lsp-servers :julials {}))
 
 (nyoom-module-p! kotlin
-  (table.insert lsp-servers :kotlin_language_server))
+  (tset lsp-servers :kotlin_language_server {}))
 
 (nyoom-module-p! latex
-  (table.insert lsp-servers :texlab))
+  (tset lsp-servers :texlab {}))
 
 (nyoom-module-p! markdown
-  (table.insert lsp-servers :marksman))
+  (tset lsp-servers :marksman {}))
 
 (nyoom-module-p! nim
-  (table.insert lsp-servers :nimls))
+  (tset lsp-servers :nimls {}))
 
 (nyoom-module-p! nix
-  (table.insert lsp-servers :rnix))
+  (tset lsp-servers :rnix {}))
 
 (nyoom-module-p! python
-  (table.insert lsp-servers :pyright))
+  (tset lsp-servers :pyright {:analysis {:autoImportCompletions true :useLibraryCodeForTypes true} :disableOrganizeImports false}))
 
 (nyoom-module-p! zig
-  (table.insert lsp-servers :zls))
+  (tset lsp-servers :zls {}))
 
 ;; Load lsp
 (let [servers lsp-servers]
-  (each [_ server (ipairs servers)]
-    ((. (. lsp server) :setup) defaults)))
+  (each [server server_config (pairs servers)]
+    ((. (. lsp server) :setup) (deep-merge defaults server_config))))
 
 ;; for trickier servers you can change up the defaults
 (nyoom-module-p! lua
