@@ -7,6 +7,7 @@
         ;;compleet           ; TODO the *other* ultimate code completion backend
         ;;fzf-lua            ; TODO a search engine for love and life
         (telescope 
+          +native 
           +zf-native 
           +frecency)  ; the search engine of the future
 
@@ -17,7 +18,7 @@
         hydra                ; the heads don't byte
         ;;indent-guides      ; highlighted indent columns
         modeline             ; snazzy, nano-emacs-inspired modeline
-        ;;nvimtree           ; a project drawer, like NERDTree for vim
+        nvimtree             ; a project drawer, like NERDTree for vim
         ;;tabs               ; keep tabs on your buffers, literally
         vc-gutter            ; vcs diff in the fringe
         not-vi-tilde-fringe  ; disable fringe tildes to mark beyond EOB
@@ -36,9 +37,9 @@
         scratch              ; emacs-like scratch buffer functionality
         word-wrap)           ; language-aware smart soft and hard wrapping
 
-(nyoom! :term)
+(nyoom! :term
         ;;fshell            ; WIP: the fennel shell that works everywhere
-        ;;toggleterm)        ; persistant/floating terminal wrapper for :term
+        toggleterm)        ; persistant/floating terminal wrapper for :term
 
 (nyoom! :checkers
         syntax)              ; tasing you for every semicolon you forget
@@ -48,7 +49,7 @@
         ;;profile            ; profile your configuration today
         ;;debugger           ; FIXME stepping through code, to help you add bugs
         ;;docker             ; row row row your boat TODO +netman?
-        ;;editorconfig       ; let someone else argue about tabs vs spaces
+        editorconfig       ; let someone else argue about tabs vs spaces
         ;;magma              ; tame Jupyter notebooks
         mason                ; setting your tools in stone
         eval                 ; run code, run (also, repls)
@@ -75,7 +76,7 @@
         ;;neorg              ; organize your plain life in plain text, the neovim way TODO +export +present
         ;;(org +pretty)      ; organize your plain life in plain text, the emacs way
         nix                  ; I hereby declare "nix geht mehr!"
-        ;;python             ; beautiful is better than ugly
+        python             ; beautiful is better than ugly
         rust                 ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
         (sh +fish))          ; she sells {ba,z,fi}sh shells on the C xor
         ;;zig                ; C, but simpler

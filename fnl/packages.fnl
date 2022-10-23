@@ -44,6 +44,73 @@
 ;; ---------------------
 ;; Put your plugins here
 ;; ---------------------
+;; (use-package! )
+;;
+(use-package! :tpope/vim-abolish 
+              {:cmd ["Subvert"]
+               :keys ["crs" "crm" "crc" "cru" "cr-" "cr." "cr<space>" "crt"]})
+
+(use-package! :kylechui/nvim-surround {:config (fn [] 
+                                                 (local surround (require "nvim-surround"))
+                                                 (surround.setup {}))})
+(use-package! :linty-org/readline.nvim
+              {:module "readline"})
+
+(use-package! :fladson/vim-kitty)
+(use-package! :milkias17/reloader.nvim {:module "reloader" :cmd ["Reload"] :requires ["nvim-lua/plenary.nvim"]})
+
+;;   ["stevearc/dressing.nvim"] = {
+;;                                 requires = "MunifTanjim/nui.nvim",
+;;                                 -- lots of configs, see
+;;                                 -- https://github.com/stevearc/dressing.nvim#installation}
+;;   ,
+;;
+;;
+;;
+;;   ["mfussenegger/nvim-dap-python"] = {
+;;                                       module = "dap-python",
+;;                                       after = "nvim-dap",
+;;                                       requires = { "mfussenegger/nvim-dap" },
+;;                                       config = function()
+;;                                       require("dap-python").setup("~/.pyenv/versions/debugpy/bin/python")
+;;                                       require("dap-python").test_runner = "pytest"
+;;                                       end,}
+;;   ,
+;;
+;;   ["smjonas/live-command.nvim"] = {
+;;                                    -- module = "live-command",
+;;                                    -- cmd = {"Norm"},
+;;                                    config = function()
+;;                                    require("plugins.configs.live_command").setup()
+;;                                    end}
+;;   ,
+(use-package! :kdheepak/lazygit.nvim {
+                                      :cmd  [ "LazyGit" "LazyGitConfig" "LazyGitFilter" "LazyGitFilterCurrentFile"]
+                                      :module  [  "lazygit" "lazygit.utils"]
+                                      :config  (fn [] (local telescope (require :telescope))
+                                                (telescope.load_extension "lazygit"))})
+(use-package! :kevinhwang91/nvim-bqf {:ft "qf"})
+;;   ["nvim-telescope/telescope-live-grep-args.nvim"] = {
+;;                                                       after = "telescope.nvim",}
+;;   ,
+;;   ,
+(use-package! :nvim-treesitter/nvim-treesitter-textobjects 
+              {
+               :after "nvim-treesitter"
+               :config (fn [] 
+                         (local vt-tree (require :vt.treesitter)) 
+                         (vt-tree.setup_textobjects))})
+(use-package! :RRethy/nvim-treesitter-textsubjects 
+              {
+               :after "nvim-treesitter"
+               :config (fn [] 
+                         (local vt-tree (require :vt.treesitter)) 
+                         (vt-tree.setup_textsubjects))})
+
+(use-package! :stevearc/overseer.nvim {:call-setup overseer})
+(use-package! :navarasu/onedark.nvim {:config (fn [] (local onedark (require :onedark))
+                                               (onedark.setup {:style "darker"}))})
+
 
 ;; Send plugins to packer
 (echo! "Installing Packages")
