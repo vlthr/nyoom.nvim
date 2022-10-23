@@ -1,6 +1,40 @@
 (import-macros {: packadd! : map! : nyoom-module-p!} :macros)
 (local {: setup : load_extension} (require :telescope))
 
+(fn fb-action [action]
+  (fn [buf_nr]
+   (local fb-actions (. (require :telescope) :extensions :file_browser :actions))
+   ((. fb-actions action) buf_nr)))
+
+(local file-browser-opts {:quiet false
+                          :mappings {:n {:r (fb-action :rename)
+                                         :s (fb-action :toggle_all)
+                                         :m (fb-action :move)
+                                         :e (fb-action :goto_home_dir)
+                                         :y (fb-action :copy)
+                                         :c (fb-action :create)
+                                         :t (fb-action :change_cwd)
+                                         :w (fb-action :goto_cwd)
+                                         :f (fb-action :toggle_browser)
+                                         :d (fb-action :remove)
+                                         :h (fb-action :toggle_hidden)
+                                         :o (fb-action :open)
+                                         :g (fb-action :goto_parent_dir)}
+                                     :i {"<C-g>" (fb-action :goto_parent_dir)
+                                         "<C-\\>d" (fb-action :remove)
+                                         "<C-\\>H" (fb-action :goto_cwd)
+                                         "<C-\\>m" (fb-action :move)
+                                         "<C-\\>h" (fb-action :toggle_hidden)
+                                         "<C-s>" (fb-action :toggle_all)
+                                         "<C-\\>n" (fb-action :create)
+                                         "<C-\\>r" (fb-action :rename)
+                                         "<C-\\>o" (fb-action :open)
+                                         "<C-\\>y" (fb-action :copy)
+                                         "<C-f>" (fb-action :toggle_browser)
+                                         "<S-CR>" (fb-action :create_from_prompt)
+                                         "<C-e>" nil ;; (fb-action :goto_home_dir)
+                                         "<C-t>" (fb-action :change_cwd)}}})
+
 (setup {:defaults {:prompt_prefix "   "
                    :selection_caret "  "
                    :entry_prefix "  "
