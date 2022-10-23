@@ -148,7 +148,6 @@
                            (set! background :light)
                            (set! background :dark))
                       (require :oxocarbon))
-     
                      {:desc :Background}]
                     [:n
                      (fn []
@@ -379,11 +378,63 @@
 ;;                      nil 
 ;;                      {:exit true :nowait true}]]})))
 
+(fn toggle_lsp_lines []
+    (local current (vim.diagnostic.config))
+    (if (. current :virtual_lines)
+        (do (vim.diagnostic.config {:virtual_lines false :virtual_text true}) (print "Disabled lsp_lines"))
+        (do (vim.diagnostic.config {:virtual_lines true :virtual_text false}) (print "Enabled lsp_lines"))))
+  
+(fn toggle_only_current_line []
+    (local current (vim.diagnostic.config))
+    (if (. current :only_current_line)
+        (do (vim.diagnostic.config {:only_current_line false}) (print "Current line"))
+        (do (vim.diagnostic.config {:only_current_line true}) (print "All lines"))))
 
+(fn toggle_severity []
+    (local current (vim.diagnostic.config))
+    (local severity vim.diagnostic.severity)
+    (local next_severity (match current.underline.severity.min
+                           (where a (= a severity.INFO)) severity.WARN
+                           (where a (= a severity.WARN)) severity.ERROR
+                           (where a (= a severity.ERROR)) severity.INFO
+                           _ severity.WARN))
+
+    (print (match next_severity
+             severity.HINT "severity.HINT"
+             severity.INFO "severity.INFO"
+             severity.WARN "severity.WARN"
+             severity.ERROR "severity.ERROR"))
+    (vim.diagnostic.config 
+      {:signs {:severity {:min next_severity}} :underline {:severity {:min next_severity}}}))
+
+(do
+    (local diagnostic-hint "
+
+                  Diagnostics
+
+  _s_: toggle severity     _l_: toggle lsp_lines
+  _c_: toggle current line _<C-q>_: send to qflist
+  ^
+  _q_: Exit
 
     ")
+    (Hydra {:name :Diagnostics
+            :hint diagnostic-hint
+            :config {:color :blue
                      :invoke_on_body true
                      :hint {:position :middle :border :solid}}
             :mode :n
+            :body :<Leader>d
+            :heads [[:s
+                     toggle_severity]
+                    [:l
+                      toggle_lsp_lines]
+                    [:c
+                      toggle_only_current_line]
+                    [:<C-q>
+                      #(vim.diagnostic.setqflist {:severity (. (vim.diagnostic.config) :signs :severity)})]
+                    [:<CR>
+                      vim.diagnostic.open_float]
                     [:q
                      nil 
+                     {:exit true :nowait true}]]}))
