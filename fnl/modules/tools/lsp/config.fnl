@@ -39,9 +39,13 @@
   (buf-map! [nv] "<leader>a" open-code-action-float!)
   (buf-map! [nv] "<leader>rn" rename!)
   (buf-map! [n] "<leader>gD" goto-declaration!)
+  (buf-map! [n] "gD" goto-declaration!)
   (buf-map! [n] "<leader>gd" goto-definition!)
+  (buf-map! [n] "gd" goto-definition!)
   (buf-map! [n] "<leader>gt" goto-type-definition!)
+  (buf-map! [n] "gt" goto-type-definition!)
   (buf-map! [n] "<leader>gr" goto-references!)
+  (buf-map! [n] "gr" goto-references!)
 
   ;; Enable lsp formatting if available 
   (nyoom-module-p! format.+onsave
