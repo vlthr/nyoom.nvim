@@ -209,10 +209,14 @@
            _h_: vim help    _c_: execute command
            _k_: keymaps     _;_: commands history  
            _O_: options     _?_: search history
+           _._: browse
   ^
-  _<Esc>_         _<Enter>_: NvimTree
+  _q_         _<Enter>_: NvimTree
 
     ")
+    (local find_files (fn [opts] (local t (require :vt.telescope)) (t.find_files opts)))
+    (local live_grep (fn [opts] (local t (require :vt.telescope)) (t.live_grep opts)))
+
     (Hydra {:name :Telescope
             :hint telescope-hint
             :config {:color :teal
@@ -221,32 +225,33 @@
             :mode :n
             :body :<Leader>f
             :heads [[:f 
-                     (fn []
-                       (vim.cmd.Telescope :find_files))]
+                      find_files]
+                    [:. 
+                      (fn []
+                        (vim.cmd.Telescope :file_browser "path=%:p:h"))]
                     [:g 
-                     (fn []
-                       (vim.cmd.Telescope :live_grep))]
+                      live_grep]
                     [:o
-                     (fn []
-                       (vim.cmd.Telescope :oldfiles))
-                     {:desc "recently opened files"}]
+                      (fn []
+                        (vim.cmd.Telescope :oldfiles))
+                      {:desc "recently opened files"}]
                     [:h 
-                     (fn []
-                       (vim.cmd.Telescope :help_tags))
-                     {:desc "vim help"}]
+                      (fn []
+                        (vim.cmd.Telescope :help_tags))
+                      {:desc "vim help"}]
                     [:k 
-                     (fn []
-                       (vim.cmd.Telescope :keymaps))]
+                      (fn []
+                        (vim.cmd.Telescope :keymaps))]
                     [:O 
-                     (fn []
-                       (vim.cmd.Telescope :vim_options))]
+                      (fn []
+                        (vim.cmd.Telescope :vim_options))]
                     [:r 
-                     (fn []
-                       (vim.cmd.Telescope :resume))]
+                      (fn []
+                        (vim.cmd.Telescope :resume))]
                     [:p 
                      (fn []
-                       ((. (. (. (require :telescope) :extensions) :project) :project) {:display_type :full}))
-                     {:desc :projects}]
+                        ((. (. (. (require :telescope) :extensions) :project) :project) {:display_type :full})
+                      {:desc :projects})]
                     ["/"
                      (fn []
                        (vim.cmd.Telescope :current_buffer_fuzzy_find))
@@ -267,10 +272,10 @@
                      (fn []
                         (vim.cmd :NvimTreeToggle))
                      {:exit true :desc :NvimTree}]
-                    [:<Esc> 
+                    [:q
                      nil 
                      {:exit true :nowait true}]]})))
-  
+
 ;; Visuals
 (nyoom-module-p! tree-sitter
   (do
