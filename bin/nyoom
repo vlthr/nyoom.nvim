@@ -25,7 +25,9 @@ case "${1:-}" in
     rm -rf ~/.cache/nvim/
     rm -rf ~/.config/nvim/lua/
     NYOOM_CLI=true nvim --headless -c 'autocmd User PackerComplete quitall' -c 'lua require[[packages]]' -c 'lua require("packer").sync()'
+    # NYOOM_CLI=true nvim -c 'lua require[[packages]]' -c 'PackerSync'
     printf "\n\n\033[92mNyoom successfully synced plugins in $(expr `date +%s` - $start_time)s\033[0m\n";
+    ln -s  "$HOME/bb/dotfiles/linux/nvim/lua/vt" "$HOME/.config/nvim/lua/vt"
     printf "Restart Neovim for changes to take effect\n\n";
     ;;
   upgrade)
