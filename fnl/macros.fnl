@@ -645,6 +645,8 @@
      (fd#:close)
      (string.sub d# 1 (- (length d#) 1))))
 
+      
+
 ;; (λ nyoom! [...]
 ;;   "Recreation of the `doom!` macro for Nyoom
 ;;   See modules.fnl for usage
@@ -708,7 +710,13 @@
           (module +with +more +flags)
   ```"
   (var moduletag nil)
-  (fn nyoom-module-set [name]
+  (fn try-require! [module]
+     `(let 
+        [(status# ret_or_err#) (pcall require ,module)]
+        (print (string.format "(require %s) => [%s, %s]" ,module status# ret_or_err#))
+        ;; (if err# (_G.vim.notify (string.format "Module %s: %s" ,module (_G.vim.fn.inspect ret_or_err#))))
+        ret_or_err#))
+  (fn declare-module [name]
     (if (str? name)
       (set moduletag name)
       (if (sym? name)
@@ -718,8 +726,8 @@
                 include-path (.. :fnl.modules. moduletag "." name)
                 config-path (.. :modules. moduletag "." name :.config)]
             `(do
-               (include ,include-path)
-               (pcall require ,config-path))))
+               (include ,include-path))))
+               ;; ,(try-require! config-path))))
         (do
           (table.insert _G.nyoom/modules (first name))
           (let [modulename (->str (first name))
@@ -728,19 +736,19 @@
                 result `(do)]
             (table.remove name 1)
             (table.insert result `(include ,include-path))
-            (table.insert result `(pcall require ,config-path))
+            ;; (table.insert result (try-require! config-path))
             (each [_ v (ipairs name)]
               (let [modulename (.. modulename "." (->str v))
                     flag-include-path (.. include-path "." (->str v))
                     flag-config-path (.. :modules. moduletag "." modulename :.config)]
                 (table.insert _G.nyoom/modules (sym modulename))
-                (table.insert result `(include ,flag-include-path))
-                (table.insert result `(pcall require ,flag-config-path))))
+                (table.insert result `(include ,flag-include-path))))
+                ;; (table.insert result (try-require! flag-config-path))))
             result)))))
   (fn load-modules [...]
     (match [...]
       (where [& rest] (empty? rest)) []
-      [name & rest] [(nyoom-module-set name)
+      [name & rest] [(declare-module name)
                      (unpack (load-modules (unpack rest)))]
       _ []))
   (let [exprs (load-modules ...)]
@@ -768,6 +776,8 @@
   (nyoom-module-p! tree-sitter)
   ```"
   (assert-compile (sym? name) "expected symbol for name" name)
+  (when (= (->str name) "vc-gutter")
+    (print (string.format "%s => %s" name (contains? _G.nyoom/modules name))))
   (when (contains? _G.nyoom/modules name)
     `,config))
 
