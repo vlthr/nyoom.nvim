@@ -64,7 +64,8 @@
       (table.insert mason-tools :prettier))
 
     (nyoom-module-p! python
-      (table.insert mason-tools :yapf))
+      (table.insert mason-tools :yapf)
+      (table.insert mason-tools :black))
 
     (nyoom-module-p! sh
       (table.insert mason-tools :shfmt))))
@@ -76,7 +77,8 @@
       (table.insert mason-tools :selene))
 
     (nyoom-module-p! python
-      (table.insert mason-tools :pylint))))
+      ;; (table.insert mason-tools :pylint)
+      (table.insert mason-tools :flake8))))
 
 
 (nyoom-module-p! debugger

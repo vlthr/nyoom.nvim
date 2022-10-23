@@ -6,5 +6,5 @@
                    :rust [(. (require :formatter.filetypes.rust) :rustfmt)]
                    :markdown [(. (require :formatter.filetypes.markdown) :prettier)]
                    :sh [(. (require :formatter.filetypes.sh) :shfmt)]
-                   :python [(. (require :formatter.filetypes.python) :yapf)]
+                   :python [(. (require :formatter.filetypes.python) :black)]
                    :zig [(. (require :formatter.filetypes.zig) :zigfmt)]}})
