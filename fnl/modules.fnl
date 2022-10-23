@@ -53,6 +53,7 @@
         eval                 ; run code, run (also, repls)
         antifennel           ; hate fennel? write lua and compile it back
         pastebin             ; interacting with pastebin platforms
+        gitlinker
         lsp                  ; :vscode 
         (neogit +forge)      ; a git porcelain for Neovim
         rgb                  ; creating color strings
