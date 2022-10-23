@@ -23,7 +23,8 @@
               :t :})
 
 (set! laststatus 3)
-(set! cmdheight 0)
+(set! cmdheight 1)
+(set! showmode false) ;; don't show --INSERT--
 
 ;; by default these can be blank:
 (fn get-git-status []
