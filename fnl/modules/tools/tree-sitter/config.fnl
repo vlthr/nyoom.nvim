@@ -96,12 +96,13 @@
 ;; load dependencies
 (packadd! nvim-ts-rainbow)
 (packadd! nvim-treesitter-textobjects)
+(packadd! nvim-treesitter-textsubjects)
 
 ; the usual
 (setup {:ensure_installed treesitter-filetypes
         :sync_install true
         :highlight {:enable true :use_languagetree true}
-        :indent {:enable true}
+        :indent {:enable true :disable [:python]} ;; disabled in python for autoindent on newline
         :rainbow {:enable true 
                   :extended_mode true
                   :colors [:#878d96
@@ -112,10 +113,10 @@
                            :#ada8a8
                            :#878d96]}
         :incremental_selection {:enable true
-                                :keymaps {:init_selection :gnn
-                                          :node_incremental :grn
-                                          :scope_incremental :grc
-                                          :node_decremental :grm}}  
+                                :keymaps {:init_selection "<C-\\>h"
+                                          :node_incremental "<C-\\>h"}}
+                                          ;; :scope_incremental :grc
+                                          ;; :node_decremental :grm}}  
         :textobjects {:select {:enable true}
                       :lookahead true
                       :keymaps {:af "@function.outer"
@@ -133,42 +134,6 @@
                              :goto_previous_end {"[M" "@function.outer"
                                                  "[]" "@class.outer"}}}})  
 
-;; load dependencies
-(packadd! nvim-ts-rainbow)
-(packadd! nvim-treesitter-textobjects)
-
-; the usual
-(setup {:ensure_installed treesitter-filetypes
-        :sync_install true
-        :highlight {:enable true :use_languagetree true}
-        :indent {:enable true}
-        :rainbow {:enable true 
-                  :extended_mode true
-                  :colors [:#878d96
-                           :#a8a8a8
-                           :#8d8d8d
-                           :#a2a9b0
-                           :#8f8b8b
-                           :#ada8a8
-                           :#878d96]}
-        :incremental_selection {:enable true
-                                :keymaps {:init_selection :gnn
-                                          :node_incremental :grn
-                                          :scope_incremental :grc
-                                          :node_decremental :grm}}  
-        :textobjects {:select {:enable true}
-                      :lookahead true
-                      :keymaps {:af "@function.outer"
-                                :if "@function.inner"
-                                :ac "@class.outer"
-                                :ic "@class.inner"}  
-                      :move {:enable true
-                             :set_jumps true
-                             :goto_next_start {"]m" "@function.outer"
-                                               "]]" "@class.outer"}
-                             :goto_next_end {"]M" "@function.outer"
-                                             "][" "@class.outer"}
-                             :goto_previous_start {"[m" "@function.outer"
-                                                   "[[" "@class.outer"}
-                             :goto_previous_end {"[M" "@function.outer"
-                                                 "[]" "@class.outer"}}}})  
+(local vt-tree (require :vt.treesitter))
+(vt-tree.setup_textsubjects)
+(vt-tree.setup_textobjects)
