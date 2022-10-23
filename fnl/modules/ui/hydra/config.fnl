@@ -19,11 +19,12 @@
   
                     Git
   
-    _J_: next hunk     _d_: show deleted
+    _J_: next hunk     _x_: show deleted
     _K_: prev hunk     _u_: undo last stage  
     _s_: stage hunk    _/_: show base file
     _p_: preview hunk  _S_: stage buffer
     _b_: blame line    _B_: blame show full
+    _d_: diff file     _l_: copy link
   ^
     _<Enter>_: Neogit         _q_: Exit
       ")
@@ -86,7 +87,7 @@
                     [:p 
                      preview_hunk 
                      {:desc "preview hunk"}]
-                    [:d
+                    [:x
                      toggle_deleted
                      {:nowait true :desc "toggle deleted"}]
                     [:b 
@@ -96,9 +97,17 @@
                      (fn []
                        blame_line {:full true})
                      {:desc "blame show full"}]
+                    [:l
+                     (fn []
+                       (vim.cmd ":Gitlinker"))
+                     {:desc "yank link"}]
                     ["/"
                      show
                      {:exit true :desc "show base file"}]
+                    [:d
+                     (fn []
+                        (vim.cmd ":DiffviewFileHistory % --base=LOCAL"))
+                     {:exit true :desc "diff file"}]
                     [:<Enter>
                      (fn []
                         (vim.cmd.Neogit))
