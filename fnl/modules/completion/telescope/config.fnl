@@ -27,6 +27,11 @@
     (packadd! telescope-fzf-native.nvim)
     (load_extension :fzf)))
 
+(nyoom-module-p! telescope.+frecency
+  (do
+    (packadd! telescope-frecency.nvim)
+    (load_extension :frecency)))
+
 ;; load media-files and zoxide only if their executables exist
 (when (= (vim.fn.executable :ueberzug) 1)
   (do

@@ -6,7 +6,8 @@
         cmp                  ; the ultimate code completion backend
         ;;compleet           ; TODO the *other* ultimate code completion backend
         ;;fzf-lua            ; TODO a search engine for love and life
-        (telescope +native)  ; the search engine of the future
+        (telescope 
+          +frecency)  ; the search engine of the future
 
         :ui
         nyoom                ; what makes Nyoom look the way it does
