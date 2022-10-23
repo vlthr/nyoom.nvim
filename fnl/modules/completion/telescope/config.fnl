@@ -47,13 +47,76 @@
                                    :height 0.8
                                    :preview_cutoff 120}
                    :set_env {:COLORTERM :truecolor}
-                   :dynamic_preview_title true}})
+                   :dynamic_preview_title true
+                   :vimgrep_arguments [:rg
+                                            :--color=never
+                                            :--hidden
+                                            :--no-heading
+                                            :--with-filename
+                                            :--line-number
+                                            :--column
+                                            :--smart-case
+                                            :--follow
+                                            :--trim]}
+        ;; :extensions_list [:themes :terms :live_grep_args :frecency]
+             :extensions {:file_browser file-browser-opts
+                          :fzf {:fuzzy true
+                                :case_mode :smart_case
+                                :override_file_sorter true
+                                :override_generic_sorter true}
+                          :frecency {:ignore_patterns [:*.git/*
+                                                       :*/tmp/*
+                                                       :*/__pycache__/*]
+                                     :show_scores false
+                                     :show_unindexed true
+                                     :workspaces (. (require :vt.projects)
+                                                    :frecency_workspaces)
+                                     :disable_devicons false}
+                          :live_grep_args {:mappings {:i {:<C-l>g (fn []
+                                                                    ((. (require :telescope-live-grep-args.actions)
+                                                                        :quote_prompt) {:postfix " --iglob "}))
+                                                          :<C-q> (fn []
+                                                                   ((. (require :telescope-live-grep-args.actions)
+                                                                       :quote_prompt)))
+                                                          :<C-l>t (fn []
+                                                                    ((. (require :telescope-live-grep-args.actions)
+                                                                        :quote_prompt) {:postfix " -t"}))}}
+                                           :auto_quoting false}
+                          :fzy_native {:override_file_sorter false
+                                       :override_generic_sorter false}
+                          :fzf_writer {:minimum_grep_characters 2
+                                       :minimum_files_characters 2
+                                       :use_highlighter true}
+                          :zf-native {:file {:enable false
+                                             :match_filename true
+                                             :highlight_results true}
+                                      :generic {:enable false
+                                                :match_filename false
+                                                :highlight_results true}}}
+             :pickers {:git_files {:attach_mappings (fn [_ map] 
+                                                      (local actions (require :telescope.actions))
+                                                      (local action_state (require :telescope.actions.state))
+                                                      ;; attach_mappings doesn't octually override here
+                                                      (actions.select_default:replace (fn [prompt_bufnr]
+                                                                                       (local action_state (require :telescope.actions.state))
+                                                                                       (local selected (action_state.get_selected_entry))
+                                                                                       (when (not (= nil selected))
+                                                                                         (actions.close prompt_bufnr)
+                                                                                         (vim.cmd (.. "DiffviewOpen " selected)))))
+                                                      false)}
+                         :find_files {:find_command [:rg
+                                                     :--files
+                                                     :--color=never
+                                                     :--follow]
+                                      :mappings {}}}})
+
 
 ;; Load extensions
 (packadd! telescope-ui-select.nvim)
 (load_extension :ui-select)
 (packadd! telescope-file-browser.nvim)
 (load_extension :file_browser)
+
 
 ;; only install native if the flag is there
 (nyoom-module-p! telescope.+native
