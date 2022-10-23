@@ -9,12 +9,13 @@
 (include :fnl.modules)
 
 ;; Setup packer
+(local non-interactive (if (os.getenv :NYOOM_CLI) true false))
 (echo! "Initiating Packer")
 (let [packer (require :packer)]
    (packer.init {:git {:clone_timeout 300}
                  :compile_path (.. (vim.fn.stdpath :config) "/lua/packer_compiled.lua")
                  :auto_reload_compiled false
-                 :display {:non_interactive true}}))
+                 :display {:non_interactive non-interactive}}))
 
 ;; Core packages
 (use-package! :wbthomason/packer.nvim {:opt true})
