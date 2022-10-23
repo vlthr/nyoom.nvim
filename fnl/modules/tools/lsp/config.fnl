@@ -32,6 +32,7 @@
           :definition goto-definition!
           :type_definition goto-type-definition!
           :code_action open-code-action-float!
+          :references goto-references!
           :rename rename!} vim.lsp.buf)
 
   (buf-map! [n] "K" open-doc-float!)
@@ -40,6 +41,7 @@
   (buf-map! [n] "<leader>gD" goto-declaration!)
   (buf-map! [n] "<leader>gd" goto-definition!)
   (buf-map! [n] "<leader>gt" goto-type-definition!)
+  (buf-map! [n] "<leader>gr" goto-references!)
 
   ;; Enable lsp formatting if available 
   (nyoom-module-p! format.+onsave
