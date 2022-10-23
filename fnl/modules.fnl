@@ -23,6 +23,7 @@
         not-vi-tilde-fringe  ; disable fringe tildes to mark beyond EOB
         ;;window-select      ; visually switch windows
         ;;zen                ; distraction-free coding or writing TODO +twilight
+        auto-session         ; automatic session saving+loading
         diffview             ; diffview
         notify)              ; pretty notifications for neovim
 
