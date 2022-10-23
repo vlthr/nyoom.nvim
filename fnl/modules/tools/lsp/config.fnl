@@ -1,6 +1,21 @@
 (import-macros {: nyoom-module-p!} :macros)
 (local lsp (require :lspconfig))
 (local {: deep-merge} (require :core.tables))
+(local install-root-dir (.. (vim.fn.stdpath :data) :mason))
+(fn concat [path-components]
+  (table.concat path-components "/"))
+
+(fn install-prefix [dir]
+  (concat [install-root-dir dir]))
+
+(fn bin-prefix [executable]
+  (concat [(install-prefix :bin) executable]))
+
+(fn package-prefix [name]
+  (concat [(install-prefix :packages) name]))
+
+(fn package-build-prefix [name]
+  (concat [(install-prefix :.packages) name]))
 
 ;;; Improve UI
 (set vim.lsp.handlers.textDocument/signatureHelp
@@ -58,6 +73,14 @@
 
 ;; conditional lsp servesr
 (local lsp-servers {})
+
+(tset lsp-servers :volar {:filetypes [:typescript
+                                        :javascript
+                                        :javascriptreact
+                                        :typescriptreact
+                                        :vue
+                                        :json]
+                            :init_options {:typescript {:serverPath "onlyIncludedForOldVersion" :tsdk (concat [(package-prefix :typescript-language-server) :node_modules :typescript :lib])}}})
 
 (nyoom-module-p! clojure
   (tset lsp-servers :clojure-lsp {}))
