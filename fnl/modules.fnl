@@ -56,6 +56,7 @@
         pastebin             ; interacting with pastebin platforms
         gitlinker
         lsp                  ; :vscode 
+        neotest              ; 
         (neogit +forge)      ; a git porcelain for Neovim
         rgb                  ; creating color strings
         tree-sitter)         ; syntax and parsing, sitting in a tree...
