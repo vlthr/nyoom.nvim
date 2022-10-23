@@ -7,6 +7,7 @@
         ;;compleet           ; TODO the *other* ultimate code completion backend
         ;;fzf-lua            ; TODO a search engine for love and life
         (telescope 
+          +zf-native 
           +frecency)  ; the search engine of the future
 
         :ui

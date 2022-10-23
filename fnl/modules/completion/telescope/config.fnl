@@ -27,6 +27,11 @@
     (packadd! telescope-fzf-native.nvim)
     (load_extension :fzf)))
 
+(nyoom-module-p! telescope.+zf-native
+  (do
+    (packadd! telescope-zf-native.nvim)
+    (load_extension :zf-native)))
+
 (nyoom-module-p! telescope.+frecency
   (do
     (packadd! telescope-frecency.nvim)
