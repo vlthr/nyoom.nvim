@@ -10,3 +10,4 @@
                                       :nyoom-module tools.lsp})
 
 
+(use-package! :jose-elias-alvarez/null-ls.nvim {:opt true :module :null-ls})

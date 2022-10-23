@@ -92,6 +92,12 @@
 (nyoom-module-p! zig
   (tset lsp-servers :zls {}))
 
+((. (require :null-ls) :setup) {:sources [(require :null-ls.builtins.formatting.black)
+                                          ;; (require :null-ls.builtins.formatting.flake8)
+                                          (require :null-ls.builtins.formatting.prettier)
+                                          (require :null-ls.builtins.formatting.isort)]})
+
+
 ;; Load lsp
 (let [servers lsp-servers]
   (each [server server_config (pairs servers)]
