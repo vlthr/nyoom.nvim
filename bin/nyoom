@@ -41,9 +41,13 @@ case "${1:-}" in
     nvim --version | sed '/^$/,$d'
     printf "\nClearing cache\n";
     rm -rf "${CACHE_PATH}"
-    rm -rf "${CONFIG_PATH}/lua"
-    NYOOM_CLI=true nvim --headless -c 'autocmd User PackerComplete quitall' -c 'lua require[[packages]]' -c 'lua require("packer").sync()'
-    # NYOOM_CLI=true nvim -c 'lua require[[packages]]' -c 'PackerSync'
+    # rm -rf "${CONFIG_PATH}/lua"
+    rm "${CONFIG_PATH}/lua/packer_compiled.lua" || true
+    # set ulimit to fix packer.sync hanging with --headless: https://github.com/wbthomason/packer.nvim/issues/751
+    ulimit -S -n 40000
+    NYOOM_CLI=true nvim --headless -c 'let g:auto_session_enabled = v:false' -c 'autocmd User PackerComplete quitall' -c 'lua require("packer").sync()'
+    # rm -rf "${CACHE_PATH}"
+    # NYOOM_CLI=true nvim -c 'let g:auto_session_enabled = v:false' -c 'autocmd User PackerComplete quitall' -c 'lua require("packer").sync()'
     printf "\n\n\033[92mNyoom successfully synced plugins in $(expr `date +%s` - $start_time)s\033[0m\n";
     ln -s  "$HOME/bb/dotfiles/linux/nvim/lua/vt" "$HOME/.config/nvim/lua/vt"
     printf "Restart Neovim for changes to take effect\n\n";
