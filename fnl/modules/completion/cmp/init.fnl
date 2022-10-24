@@ -3,6 +3,7 @@
 ;; standard completion for neovim
 (use-package! :hrsh7th/nvim-cmp
               {:nyoom-module completion.cmp
+               :module :cmp
                :wants :LuaSnip
                :event [:InsertEnter :CmdLineEnter]
                :requires [(pack :hrsh7th/cmp-path {:after :nvim-cmp})
