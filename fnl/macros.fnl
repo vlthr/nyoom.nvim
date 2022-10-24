@@ -1,6 +1,7 @@
 (tset _G :nyoom/pack [])
 (tset _G :nyoom/rock [])
-(tset _G :nyoom/modules [])
+;; (print (string.format "macros imported: %s" (. _G :nyoom/modules)))
+(tset _G :nyoom/modules {})
 
 (λ expr->str [expr]
   `(macrodebug ,expr nil))
@@ -647,6 +648,34 @@
 
       
 
+(λ nyoom-init-modules! []
+  (fn init-module [module-name module-def]
+    `(do
+       ,(icollect [_ include-path (ipairs (or module-def.include-paths []))]
+          `(include ,include-path))))
+  (fn init-modules [registry]
+    (icollect [module-name module-def (pairs registry)]
+      (init-module module-name module-def)))
+  (let [inits (init-modules _G.nyoom/modules)]
+    (expand-exprs inits)))
+
+(λ nyoom-config-modules! []
+  (fn try-require! [module]
+     `(let 
+        [(status# ret_or_err#) (pcall require ,module)]
+        ;; (print (string.format "(require %s) => [%s, %s]" ,module status# ret_or_err#))
+        (if err# (_G.vim.notify (string.format "Module %s: %s" ,module ret_or_err#)))
+        ret_or_err#))
+  (fn config-module [module-name module-decl]
+    `(do
+       ,(icollect [_ config-path (ipairs (or module-decl.config-paths []))]
+          `,(try-require! config-path))))
+  (fn config-modules [registry]
+    (icollect [module-name module-def (pairs registry)]
+      (config-module module-name module-def)))
+  (let [configs (config-modules _G.nyoom/modules)]
+    (expand-exprs configs)))
+
 ;; (λ nyoom! [...]
 ;;   "Recreation of the `doom!` macro for Nyoom
 ;;   See modules.fnl for usage
@@ -694,7 +723,6 @@
 ;;   (expand-exprs 
 ;;     (icollect [_ name (ipairs [...])]
 ;;       (nyoom-module-set name))))
-
 (λ nyoom! [...]
   "Recreation of the `doom!` macro for Nyoom
   See modules.fnl for usage
@@ -710,49 +738,45 @@
           (module +with +more +flags)
   ```"
   (var moduletag nil)
-  (fn try-require! [module]
-     `(let 
-        [(status# ret_or_err#) (pcall require ,module)]
-        (print (string.format "(require %s) => [%s, %s]" ,module status# ret_or_err#))
-        ;; (if err# (_G.vim.notify (string.format "Module %s: %s" ,module (_G.vim.fn.inspect ret_or_err#))))
-        ret_or_err#))
-  (fn declare-module [name]
+  (var registry {})
+  (fn register-module [name]
     (if (str? name)
       (set moduletag name)
       (if (sym? name)
         (do
-          (table.insert _G.nyoom/modules name)
           (let [name (->str name)
                 include-path (.. :fnl.modules. moduletag "." name)
                 config-path (.. :modules. moduletag "." name :.config)]
-            `(do
-               (include ,include-path))))
-               ;; ,(try-require! config-path))))
+            (tset registry name {:include-paths [include-path] :config-paths [config-path]})))
         (do
-          (table.insert _G.nyoom/modules (first name))
           (let [modulename (->str (first name))
                 include-path (.. :fnl.modules. moduletag "." modulename)
                 config-path (.. :modules. moduletag "." modulename :.config)
-                result `(do)]
-            (table.remove name 1)
-            (table.insert result `(include ,include-path))
-            ;; (table.insert result (try-require! config-path))
-            (each [_ v (ipairs name)]
-              (let [modulename (.. modulename "." (->str v))
+                result `(do)
+                [_ & flags] name]
+            (var includes [include-path])
+            (var configs [config-path])
+            (each [_ v (ipairs flags)]
+              (let [flagmodule (.. modulename "." (->str v))
                     flag-include-path (.. include-path "." (->str v))
-                    flag-config-path (.. :modules. moduletag "." modulename :.config)]
-                (table.insert _G.nyoom/modules (sym modulename))
-                (table.insert result `(include ,flag-include-path))))
-                ;; (table.insert result (try-require! flag-config-path))))
-            result)))))
-  (fn load-modules [...]
-    (match [...]
-      (where [& rest] (empty? rest)) []
-      [name & rest] [(declare-module name)
-                     (unpack (load-modules (unpack rest)))]
-      _ []))
-  (let [exprs (load-modules ...)]
-    (expand-exprs exprs)))
+                    flag-config-path (.. :modules. moduletag "." flagmodule :.config)]
+                (table.insert includes flag-include-path)
+                (table.insert configs flag-config-path)
+                (tset registry flagmodule {})))
+            (tset registry modulename {:include-paths includes :config-paths configs}))))))
+  (fn register-modules [...]
+    (each [_ mod (ipairs [...])]
+      (register-module mod))
+    registry)
+  (let [modules (register-modules ...)]
+    ;; (print (string.format "About to register %s modules" (length (keys modules))))
+    (tset _G :nyoom/modules modules)
+    ;; (print (string.format "Registered %s modules" (length (keys (. _G :nyoom/modules)))))
+    `(do
+       (tset _G :nyoom/modules ,modules)
+       (. _G :nyoom/modules))))
+       ;; (lua "return _G[\"nyoom/modules\"]"))))
+
 
 (λ nyoom-module! [name]
   "By default modules should be loaded through use-package!. Of course, not every
@@ -776,9 +800,10 @@
   (nyoom-module-p! tree-sitter)
   ```"
   (assert-compile (sym? name) "expected symbol for name" name)
-  (when (= (->str name) "vc-gutter")
-    (print (string.format "%s => %s" name (contains? _G.nyoom/modules name))))
-  (when (contains? _G.nyoom/modules name)
+  ;; (when (or (= (->str name) "telescope") (= (->str name) "vc-gutter"))
+  ;;   (print (string.format ":nyoom/modules [%s]" (table.concat (icollect [k v (pairs (. _G :nyoom/modules))] (->str k)) " ")))
+  ;;   (print (string.format "%s => %s" name (not= nil (. _G.nyoom/modules (->str name))))))
+  (when (not= nil (. _G.nyoom/modules (->str name)))
     `,config))
 
 (λ nyoom-module-ensure! [name]
@@ -790,7 +815,7 @@
   (nyoom-module-ensure! tools.tree-sitter)
   ```"
   (assert-compile (sym? name) "expected symbol for name" name)
-  (when (not (contains? _G.nyoom/modules name))
+  (when (not= nil (. _G.nyoom/modules name))
     (let [msg (.. "One of your installed modules depends on " (->str name) ". Please enable it")]
      `(vim.notify ,msg vim.log.levels.WARN))))
 
@@ -827,6 +852,8 @@
  : let!
  : sh
  : nyoom!
+ : nyoom-init-modules!
+ : nyoom-config-modules!
  : nyoom-module!
  : nyoom-module-p!
  : nyoom-module-ensure!

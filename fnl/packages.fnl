@@ -1,23 +1,24 @@
-(import-macros {: packadd! : pack : rock : use-package! : rock! : unpack!} :macros)
+(import-macros {: packadd! : pack : rock : use-package! : rock! : unpack! : nyoom-init-modules! : nyoom-config-modules! : set!} :macros)
 (local {: echo!} (require :core.lib.io))
 
-;; Load packer
-(echo! "Loading Packer")
+;; Setup packer
+(local headless (= 0 (length (vim.api.nvim_list_uis))))
 (packadd! packer.nvim)
+(let [packer (require :packer)]
+   (packer.init {:git {:clone_timeout 300}
+                 ;; packer can reach MacOS open file limit (alternatively, override with ulimit -S -n 40000)
+                 ;; unfortunately, does not work for --headless: https://github.com/wbthomason/packer.nvim/issues/751
+                 :max_jobs (if (not headless) 50 nil) 
+                 :compile_path (.. (vim.fn.stdpath :config) "/lua/packer_compiled.lua")
+                 :auto_reload_compiled false
+                 ;; :log {:level :trace}
+                 :display {:non_interactive headless}}))
 
 ;; include modules
 (echo! "Compiling Modules")
 (include :fnl.modules)
+(nyoom-init-modules!)
 
-;; Setup packer
-(local non-interactive (if (os.getenv :NYOOM_CLI) true false))
-(echo! "Initiating Packer")
-(let [packer (require :packer)]
-   (packer.init {:git {:clone_timeout 300}
-                 :max_jobs 50 ;; packer can reach MacOS open file limit (alternatively, override with ulimit -S -n 40000)
-                 :compile_path (.. (vim.fn.stdpath :config) "/lua/packer_compiled.lua")
-                 :auto_reload_compiled false
-                 :display {:non_interactive non-interactive}}))
 
 ;; Core packages
 (use-package! :wbthomason/packer.nvim {:opt true})
@@ -59,7 +60,7 @@
               {:module "readline"})
 
 (use-package! :fladson/vim-kitty)
-(use-package! :milkias17/reloader.nvim {:module "reloader" :cmd ["Reload"] :requires ["nvim-lua/plenary.nvim"]})
+;; (use-package! :milkias17/reloader.nvim {:module "reloader" :cmd ["Reload"] :requires ["nvim-lua/plenary.nvim"]})
 
 ;;   ["stevearc/dressing.nvim"] = {
 ;;                                 requires = "MunifTanjim/nui.nvim",
@@ -117,3 +118,4 @@
 ;; Send plugins to packer
 (echo! "Installing Packages")
 (unpack!)
+(nyoom-config-modules!)

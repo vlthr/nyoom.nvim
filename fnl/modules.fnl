@@ -10,43 +10,43 @@
         (telescope 
           +native 
           +zf-native 
-          +frecency))  ; the search engine of the future
+          +frecency)  ; the search engine of the future
 
-(nyoom! :ui
+        :ui
         (nyoom +modes)       ; what makes Nyoom look the way it does
         dashboard            ; a nifty splash screen for neovim
         ;;nyoom-quit         ; WIP: buggy, terrible implementation of doom-quit. 
+        vc-gutter            ; vcs diff in the fringe
         hydra                ; the heads don't byte
         ;;indent-guides      ; highlighted indent columns
         modeline             ; snazzy, nano-emacs-inspired modeline
         nvimtree             ; a project drawer, like NERDTree for vim
         ;;tabs               ; keep tabs on your buffers, literally
-        vc-gutter            ; vcs diff in the fringe
         not-vi-tilde-fringe  ; disable fringe tildes to mark beyond EOB
         ;;window-select      ; visually switch windows
         ;;zen                ; distraction-free coding or writing TODO +twilight
         auto-session         ; automatic session saving+loading
         diffview             ; diffview
-        notify)              ; pretty notifications for neovim
+        notify              ; pretty notifications for neovim
 
-(nyoom! :editor
+        :editor
         ;;fold               ; (nigh) universal code folding
         (format +onsave)     ; automated prettiness
         ;;multiple-cursors   ; TODO editing in many places at once
         parinfer             ; turn lisp into python, sort of
         (hotpot +reflect)    ; lets get cooking. please don't disable this
         scratch              ; emacs-like scratch buffer functionality
-        word-wrap)           ; language-aware smart soft and hard wrapping
+        word-wrap           ; language-aware smart soft and hard wrapping
 
-(nyoom! :term
+        :term
         ;;fshell            ; WIP: the fennel shell that works everywhere
-        toggleterm)         ; persistant/floating terminal wrapper for :term
+        toggleterm         ; persistant/floating terminal wrapper for :term
 
-(nyoom! :checkers
-        syntax)              ; tasing you for every semicolon you forget
+        :checkers
+        syntax              ; tasing you for every semicolon you forget
         ;;spell              ; tasing you for misspelling mispelling
 
-(nyoom! :tools
+        :tools
         ;;profile            ; profile your configuration today
         ;;debugger           ; FIXME stepping through code, to help you add bugs
         ;;docker             ; row row row your boat TODO +netman?
@@ -61,9 +61,9 @@
         neotest              ; 
         (neogit +forge)      ; a git porcelain for Neovim
         rgb                  ; creating color strings
-        tree-sitter)         ; syntax and parsing, sitting in a tree...
+        tree-sitter         ; syntax and parsing, sitting in a tree...
 
-(nyoom! :lang
+        :lang
         ;;cc                 ; C > C++ == 1
         ;;clojure            ; java with a lisp
         ;;common-lisp        ; if you've seen one lisp, you've seen them all
@@ -79,14 +79,14 @@
         nix                  ; I hereby declare "nix geht mehr!"
         python             ; beautiful is better than ugly
         rust                 ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
-        (sh +fish))          ; she sells {ba,z,fi}sh shells on the C xor
+        (sh +fish)          ; she sells {ba,z,fi}sh shells on the C xor
         ;;zig                ; C, but simpler
 
-(nyoom! :config
-        (default +bindings +smartparens))
+        :config
+        (default +bindings +smartparens)
         ;;literate           ; literate configurations for neovim
 
 
-(nyoom! :app
+        :app
         calendar)
         ;;spotify

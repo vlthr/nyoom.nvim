@@ -27,12 +27,24 @@
 ;; add language servers to path
 (set vim.env.PATH (.. vim.env.PATH ":" (vim.fn.stdpath :data) :/mason/bin))
 
+(import-macros {: packadd!} :macros)
+;; Load packer
+;; (echo! "Loading Packer")
+;; (tset package.loaded :packer nil)
+;; (packadd! packer.nvim)
+;; (require :packer)
+
+(local cli (os.getenv :NYOOM_CLI))
+(include :fnl.modules)
+
 ;; load packer if its available
 (if (= (vim.fn.filereadable (.. (vim.fn.stdpath :config) "/lua/packer_compiled.lua")) 1)
   (require :packer_compiled))
 
 ;; userconfig
-(local cli (os.getenv :NYOOM_CLI))
 (if cli
   (require :packages)
-  (require :config))
+  (do
+    ;; (require :modules)
+    (require :modules)
+    (require :config)))
