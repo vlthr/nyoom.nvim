@@ -1,4 +1,5 @@
 (import-macros {: use-package!} :macros)
 
-(use-package! :anuvyklack/hydra.nvim {:nyoom-module ui.hydra})
+(use-package! :anuvyklack/hydra.nvim {:nyoom-module ui.hydra 
+                                      :keys [:<leader>g :<leader>f]})
                                       
