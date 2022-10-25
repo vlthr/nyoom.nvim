@@ -1,6 +1,6 @@
 (import-macros {: set! : colorscheme : nyoom-module-p!} :macros)
 (local {: autoload} (require :core.lib.autoload))
-(local Hydra (autoload :hydra))
+(local Hydra (require :hydra))
 
 ;; Git
 (nyoom-module-p! vc-gutter
