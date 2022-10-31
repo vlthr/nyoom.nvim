@@ -6,6 +6,7 @@
 (packadd! packer.nvim)
 (let [packer (require :packer)]
    (packer.init {:git {:clone_timeout 300}
+                 :ensure_dependencies true
                  ;; packer can reach MacOS open file limit (alternatively, override with ulimit -S -n 40000)
                  ;; unfortunately, does not work for --headless: https://github.com/wbthomason/packer.nvim/issues/751
                  :max_jobs (if (not headless) 50 nil) 
@@ -114,8 +115,17 @@
 (use-package! :navarasu/onedark.nvim {:config (fn [] (local onedark (require :onedark))
                                                (onedark.setup {:style "darker"}))})
 
+(use-package! :stevearc/dressing.nvim)
+(use-package! 
+    :ziontee113/icon-picker.nvim
+    {   :module [:icon-picker]
+        :cmd [:IconPickerNormal :IconPickerInsert :IconPickerYank]
+        :config (fn []
+                  ((. (require :icon-picker) :setup) {:disable_legacy_commands true}))})
+
 
 ;; Send plugins to packer
 (echo! "Installing Packages")
 (unpack!)
 (nyoom-config-modules!)
+(echo! "Configured modules!")

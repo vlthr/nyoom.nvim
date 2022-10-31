@@ -1,10 +1,15 @@
-(tset _G :nyoom/pack [])
-(tset _G :nyoom/rock [])
-;; (print (string.format "macros imported: %s" (. _G :nyoom/modules)))
-(tset _G :nyoom/modules {})
-
 (λ expr->str [expr]
   `(macrodebug ,expr nil))
+
+(fn tset-default [table key default]
+  (when (= nil (. table key))
+      (tset table key default))
+  (. table key))
+
+(tset-default _G :nyoom/pack [])
+(tset-default _G :nyoom/rock [])
+(tset-default _G :nyoom/modules {})
+(tset-default _G :nyoom/errors [])
 
 (fn nil? [x]
   (= nil x))
@@ -656,15 +661,19 @@
   (fn init-modules [registry]
     (icollect [module-name module-def (pairs registry)]
       (init-module module-name module-def)))
+  (tset _G :nyoom/packs [])
+  (tset _G :nyoom/rocks [])
   (let [inits (init-modules _G.nyoom/modules)]
     (expand-exprs inits)))
 
 (λ nyoom-config-modules! []
+  
   (fn try-require! [module]
      `(let 
         [(status# ret_or_err#) (pcall require ,module)]
         ;; (print (string.format "(require %s) => [%s, %s]" ,module status# ret_or_err#))
-        (if err# (_G.vim.notify (string.format "Module %s: %s" ,module ret_or_err#)))
+        (if (not status#)
+            (table.insert _G.nyoom/errors ret_or_err#))
         ret_or_err#))
   (fn config-module [module-name module-decl]
     `(do
@@ -673,8 +682,14 @@
   (fn config-modules [registry]
     (icollect [module-name module-def (pairs registry)]
       (config-module module-name module-def)))
+  (fn report-errors! []
+    `(each [m# err# (pairs _G.nyoom/errors)]
+      (_G.vim.notify (string.format "Module error %s: \n\n%s" m# err#) _G.vim.log.levels.ERROR)))
   (let [configs (config-modules _G.nyoom/modules)]
-    (expand-exprs configs)))
+    (expand-exprs [(tset _G :nyoom/errors [])
+                   (unpack configs)
+                   (report-errors!)])))
+                   
 
 ;; (λ nyoom! [...]
 ;;   "Recreation of the `doom!` macro for Nyoom
@@ -800,11 +815,15 @@
   (nyoom-module-p! tree-sitter)
   ```"
   (assert-compile (sym? name) "expected symbol for name" name)
-  ;; (when (or (= (->str name) "telescope") (= (->str name) "vc-gutter"))
-  ;;   (print (string.format ":nyoom/modules [%s]" (table.concat (icollect [k v (pairs (. _G :nyoom/modules))] (->str k)) " ")))
-  ;;   (print (string.format "%s => %s" name (not= nil (. _G.nyoom/modules (->str name))))))
-  (when (not= nil (. _G.nyoom/modules (->str name)))
-    `,config))
+  (let [name (->str name)
+        module-exists (not= nil (. _G.nyoom/modules name))]
+   (when (and (not module-exists) (or (= name "telescope") (= name "vc-gutter")))
+     (print (string.format ":nyoom/modules [%s]" (table.concat (icollect [k v (pairs (. _G :nyoom/modules))] (->str k)) " ")))
+     (print (string.format "%s => %s" name (not= nil (. _G.nyoom/modules (->str name))))))
+   (when module-exists 
+     `,config)))
+
+    
 
 (λ nyoom-module-ensure! [name]
   "Ensure a module is enabled
@@ -829,7 +848,50 @@
   (let [modulecount (count _G.nyoom/modules)]
     `,modulecount))
 
+(λ test! [a]
+   (assert-compile (str? a) "expected string for a" a)
+  `(print (. _G ,a)))
+
+;; (λ query-bind! [[binds] q]
+;;   "treesitter iter_captures macro"
+;;   (var out-binds [])
+;;   (var id-gensym (gensym "id"))
+;;   (var node-gensym (gensym "node"))
+;;   (var metadata-gensym (gensym "metadata"))
+;;   (fn add-bind [bind ty ty-val]
+;;     (var value (match ty-val
+;;                 :id `id-gensym
+;;                 _ (assert-compile false "Expected one of :id, ..." ty)))
+;;     (table.insert out-binds bind)
+;;     (table.insert out-binds value))
+;;   (fn parse-next [bind ?ty ...]; rest]
+;;     (assert-compile (sym? bind) "Expected symbol" bind)
+;;     (if (nil? ?ty)
+;;         (add-bind bind bind (->str bind))
+;;         (do
+;;             (if (sym? ?ty)
+;;                 (add-bind bind ?ty (->str bind)))
+;;             (table.insert out-binds (add-bind bind ?ty ?ty))))
+;;     (if (not (empty? [...]))
+;;         (parse-next ...)))
+;;   (parse-next binds)
+;;   `(icollect [,id-gensym ,node-gensym ,metadata-gensym ,q]
+;;      [,(unpack out-binds)]))
+
+(λ dbg! [s]
+  ;; (assert-compile! (sym? ))
+  (let [var-name (tostring s)
+        value s
+        name-text [var-name :DiagnosticHint]
+        padding-text [" = " :Comment]
+        value-text [`(_G.vim.inspect ,value) :DiagnosticHint]
+        chunks [name-text padding-text value-text]]
+   `(do
+      (vim.api.nvim_echo ,chunks true {})
+      ,value)))
+
 {: contains?
+ : tset-default
  : expr->str
  : vlua
  : colorscheme
@@ -858,4 +920,17 @@
  : nyoom-module-p!
  : nyoom-module-ensure!
  : nyoom-package-count
+ : test!
+ : sym?
+ : nil?
+ : empty?
+ : str?
+ : num?
+ : bool?
+ : fn?
+ : tbl?
+ : any?
+ : all?
+ : ->str
+ ;; : query-bind!
  : nyoom-module-count}

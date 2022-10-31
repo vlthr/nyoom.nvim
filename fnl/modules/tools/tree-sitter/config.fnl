@@ -133,8 +133,12 @@
                              :goto_previous_start {"[m" "@function.outer"
                                                    "[[" "@class.outer"}
                              :goto_previous_end {"[M" "@function.outer"
-                                                 "[]" "@class.outer"}}}})  
-
+                                                 "[]" "@class.outer"}}}  
+        :query_linter { :enable true
+                        :use_virtual_text true
+                        :lint_events [:BufWrite :CursorHold]}})
 (local vt-tree (require :vt.treesitter))
+
+
 (vt-tree.setup_textsubjects)
 (vt-tree.setup_textobjects)
