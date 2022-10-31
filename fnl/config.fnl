@@ -2,6 +2,16 @@
 (local {: autoload} (require :core.lib.autoload))
 (local vtele (autoload :vt.telescope))
 (local search-repeat-change (autoload :vt.search-repeat-change))
+(local init-commands-augroup
+       (vim.api.nvim_create_augroup :init_commands {:clear true}))
+
+(vim.api.nvim_create_autocmd :BufReadPost
+                             {:command "if &ft !~# 'commit\\|rebase' && line(\"'\\\"\") > 1 && line(\"'\\\"\") <= line(\"$\") | execute \"normal! g`\\\"\" | endif"
+                              :group init-commands-augroup
+                              :pattern "*"
+                              :once true})
+
+                
 ;; (map! [nvo] :<space> "<NOP>")
 ;; (vim.cmd "unmap <space>")
 (map! [i] :<F19> :<NOP>)
