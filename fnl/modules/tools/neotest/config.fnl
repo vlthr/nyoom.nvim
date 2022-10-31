@@ -1,11 +1,14 @@
 (import-macros {: packadd! : nyoom-module-p!} :macros)
-(local {: setup} (require :neotest))
+(local neotest (require :neotest))
 
 (packadd! neotest-python)
 (local neotest-python (require :neotest-python))
-(setup { :adapters [ (neotest-python {:dap { :justMyCode false}})]})
+(local pytest-args [ "--log-level" "debug" "--slow"])
 
-(nyoom-module-p! ui.hydra
+(neotest.setup {:icons {:passed "" :failed "" :running "" :skipped "" :unknown ""}
+                :adapters [ (neotest-python {:args (fn [] pytest-args)
+                                             :dap { :justMyCode true}})]})
+(nyoom-module-p! hydra
   (do
     (local Hydra (require :hydra))
     (local neotest-hint "
@@ -16,7 +19,8 @@
   _f_: test file      _a_: attach to test
   _s_: stop tests   
 ^
-  _q_: Exit
+                      _<Tab>_:   toggle summary
+  _q_: Exit           _<Enter>_: show output
 
     ")
     (Hydra {:name :Neotest
@@ -28,24 +32,25 @@
             :mode :n
             :body :<Leader>t
             :heads [[:t 
-                     #((. (require "neotest") :run :run))
+                     #(neotest.run.run)
                      {:exit true}]
                     [:f 
-                     #((. (require "neotest") :run :run) (vim.fn.expand "%"))
+                     #(neotest.run.run (vim.fn.expand "%"))
                      {:exit true}]
                     [:d 
-                     #((. (require "neotest") :run :run) {:strategy :dap})
+                     #(neotest.run.run {:strategy :dap})
                      {:exit true}]
                     [:s 
-                     #((. (require "neotest") :run :stop))
+                     #(neotest.run.stop)
                      {:exit true}]
                     [:a 
-                     #((. (require "neotest") :run :attach))
+                     #(neotest.run.attach)
                      {:exit true}]
-                    [:<CR> 
-                     #((. (require "neotest") :output :open 
-                        {:short false :enter true :quiet false})) 
-                        ;; :position-id nil
+                    [:<Tab> 
+                     #(neotest.summary.toggle) 
+                     {:exit true}]
+                    [:<Enter> 
+                     #(neotest.output.open {:short true :enter true :quiet false}) 
                      {:exit true}]
                     [:q
                      nil 
