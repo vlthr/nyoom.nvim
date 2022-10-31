@@ -418,8 +418,9 @@
 
   _s_: toggle severity     _l_: toggle lsp_lines
   _c_: toggle current line _<C-q>_: send to qflist
+  _K_: open float          _r_: refresh
   ^
-  _q_: Exit
+  _q_: Exit                _<Enter>_: open trouble
 
     ")
     (Hydra {:name :Diagnostics
@@ -437,8 +438,12 @@
                       toggle_only_current_line]
                     [:<C-q>
                       #(vim.diagnostic.setqflist {:severity (. (vim.diagnostic.config) :signs :severity)})]
-                    [:<CR>
+                    [:K
                       vim.diagnostic.open_float]
+                    [:r
+                      #(vim.cmd "TroubleRefresh")]
+                    [:<Enter>
+                      #(vim.cmd "Trouble")]
                     [:q
                      nil 
                      {:exit true :nowait true}]]}))
@@ -477,3 +482,4 @@
                     [:<Esc>
                       nil
                       {:exit true}]]})))
+
