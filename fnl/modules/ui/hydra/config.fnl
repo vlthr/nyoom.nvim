@@ -208,13 +208,14 @@
            _h_: vim help    _c_: execute command
            _k_: keymaps     _;_: commands history  
            _O_: options     _?_: search history
-           _._: browse
+           _._: browse      _Q_: macroscope
   ^
   _q_         _<Enter>_: NvimTree
 
     ")
     (local find_files (fn [opts] (local t (autoload :vt.telescope)) (t.find_files opts)))
     (local live_grep (fn [opts] (local t (autoload :vt.telescope)) (t.live_grep opts)))
+    (local telescope (autoload telescope))
 
     (Hydra {:name :Telescope
             :hint telescope-hint
@@ -247,9 +248,12 @@
                     [:r 
                       (fn []
                         (vim.cmd.Telescope :resume))]
+                    [:Q 
+                      (fn []
+                        (telescope.extensions.macroscope.default))]
                     [:p 
                      (fn []
-                        ((. (. (. (autoload :telescope) :extensions) :project) :project) {:display_type :full})
+                        (telescope.extensions.project.project {:display_type :full})
                       {:desc :projects})]
                     ["/"
                      (fn []
