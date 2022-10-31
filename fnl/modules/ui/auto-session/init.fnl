@@ -6,5 +6,5 @@
 (use-package! :rmagatti/auto-session
               { :nyoom-module ui.auto-session})
                 ;; :module "auto-session"
-                ;; :cmds [:SaveSession :RestoreSession :RestoreSessionFromFile :DeleteSession :Autosession]})
+                ;; :cmd [:SaveSession :RestoreSession :RestoreSessionFromFile :DeleteSession :Autosession]})
 
