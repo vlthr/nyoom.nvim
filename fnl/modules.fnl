@@ -5,7 +5,7 @@
 (nyoom! :completion
         cmp                  ; the ultimate code completion backend
         ;;compleet           ; FIXME the *other* ultimate code completion backend
-        copilot              ; the code completion of the future
+        ;; copilot           ; the code completion of the future
         ;;fzf-lua            ; TODO a search engine for love and life
         (telescope 
           +native 
@@ -44,7 +44,7 @@
         toggleterm         ; persistant/floating terminal wrapper for :term
 
         :checkers
-        syntax              ; tasing you for every semicolon you forget
+        ;;syntax              ; tasing you for every semicolon you forget
         ;;spell              ; tasing you for misspelling mispelling
 
         :tools
@@ -53,10 +53,11 @@
         ;;docker             ; row row row your boat TODO +netman?
         editorconfig       ; let someone else argue about tabs vs spaces
         ;;magma              ; tame Jupyter notebooks
+        neoclip
         mason                ; setting your tools in stone
         eval                 ; run code, run (also, repls)
         antifennel           ; hate fennel? write lua and compile it back
-        pastebin             ; interacting with pastebin platforms
+        ;; pastebin             ; interacting with pastebin platforms
         gitlinker
         lsp                  ; :vscode 
         neotest              ; 
@@ -77,7 +78,7 @@
         ;;nim                ; python + lisp at the speed of c
         ;;neorg              ; organize your plain life in plain text, the neovim way TODO +export +present
         ;;(org +pretty)      ; organize your plain life in plain text, the emacs way
-        nix                  ; I hereby declare "nix geht mehr!"
+        ;; nix                  ; I hereby declare "nix geht mehr!"
         python             ; beautiful is better than ugly
         rust                 ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
         (sh +fish)          ; she sells {ba,z,fi}sh shells on the C xor
