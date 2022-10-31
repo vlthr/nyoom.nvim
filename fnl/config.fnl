@@ -37,6 +37,8 @@
 (set! clipboard "")
 ;; smartindent is automatic indentation, but disabled for pasting
 (set! smartindent)
+(set! undofile)
+
 
 ;; The let option sets global, or `vim.g` options. 
 ;; Heres an example with localleader, setting it to <space>m
