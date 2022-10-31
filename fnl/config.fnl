@@ -1,7 +1,10 @@
-(require-macros :macros)
+;; (require-macros :macros)
+(import-macros {: tset-default : test! : command! : map! : set! : let! : nyoom-init-modules! : nyoom-config-modules! : colorscheme : nyoom-module-count} :macros)
 (local {: autoload} (require :core.lib.autoload))
 (local vtele (autoload :vt.telescope))
+(local telescope (autoload :telescope))
 (local search-repeat-change (autoload :vt.search-repeat-change))
+(local neoclip (autoload :neoclip))
 (local trouble (autoload :trouble))
 (tset _G :vtf (require :vtf))
 
@@ -125,9 +128,15 @@
 
 
 (map! [n] :<C-l> :<C-w>l {:desc " window right"})
+(map! [n] :<leader>ul (fn []
+                        (vim.cmd "w")
+                        (vim.cmd (.. "Fnlsource " (vim.fn.expand "~/.config/nvim/fnl/modules.fnl")))
+                        (vim.cmd (.. "Fnlsource " (vim.fn.expand "%")))
+                        (print "reloaded file"))
+      {:desc "Source file"})
 (map! [n] :<leader>uv (fn []
                         ;; (local reload (require :plenary.reload))
-                        (vim.cmd (.. ":Fnlsource " "/Users/von/.config/nvim/fnl/config.fnl"))
+                        (vim.cmd (.. ":Fnlsource " (vim.fn.expand "~/.config/nvim/fnl/config.fnl")))
                         (print "reloaded mappings"))
       {:desc "Update nvim"})
 (map! [n] :<C-h> :<C-w>h {:desc " window left"})
@@ -174,6 +183,8 @@
 (map! [nvsit] "<C-\\>q" (fn []
                           ((. (require :vt.quickfix) :toggle_qf)))
       {:desc "open quickfix list"})
+;; √ is <M-v>
+(map! [nvsit] "√" #(telescope.extensions.neoclip.default))
 
 ;; TODO: map cmd-x in cmdline to C-r equivalent
 (map! [nvsit] "<C-\\>x" "<cmd>Telescope command_history<CR>" {:desc "telescope command history"})
