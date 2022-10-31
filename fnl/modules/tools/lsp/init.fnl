@@ -11,3 +11,5 @@
 
 
 (use-package! :jose-elias-alvarez/null-ls.nvim {:opt true :module :null-ls})
+
+(use-package! :folke/neodev.nvim {:opt true :module :neodev})

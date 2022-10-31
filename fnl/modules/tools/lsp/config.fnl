@@ -3,20 +3,12 @@
 (local lsp (autoload :lspconfig))
 (local {: deep-merge} (autoload :core.lib.tables))
 (local install-root-dir (.. (vim.fn.stdpath :data) :mason))
-(fn concat [path-components]
-  (table.concat path-components "/"))
-
-(fn install-prefix [dir]
-  (concat [install-root-dir dir]))
-
-(fn bin-prefix [executable]
-  (concat [(install-prefix :bin) executable]))
-
-(fn package-prefix [name]
-  (concat [(install-prefix :packages) name]))
-
-(fn package-build-prefix [name]
-  (concat [(install-prefix :.packages) name]))
+(local lsp-util (autoload :lspconfig.util))
+(local vtf (autoload :vtf))
+(vim.fn.sign_define :DiagnosticSignError {:text "" :texthl :DiagnosticSignError})
+(vim.fn.sign_define :DiagnosticSignWarn {:text "" :texthl :DiagnosticSignWarn})
+(vim.fn.sign_define :DiagnosticSignInfo {:text "" :texthl :DiagnosticSignInfo})
+(vim.fn.sign_define :DiagnosticSignHint {:text "" :texthl :DiagnosticSignHint})
 
 ;;; Improve UI
 (set vim.lsp.handlers.textDocument/signatureHelp
@@ -87,7 +79,14 @@
                                         :typescriptreact
                                         :vue
                                         :json]
-                            :init_options {:typescript {:serverPath "onlyIncludedForOldVersion" :tsdk (concat [(package-prefix :typescript-language-server) :node_modules :typescript :lib])}}})
+                          :init_options {:typescript {
+                                                      :serverPath "onlyIncludedForOldVersion" 
+                                                      :tsdk (vtf.path.stdpath 
+                                                              :mason-packages 
+                                                              :typescript-language-server 
+                                                              :node_modules 
+                                                              :typescript 
+                                                              :lib)}}})
 
 (nyoom-module-p! clojure
   (tset lsp-servers :clojure-lsp {}))
@@ -117,30 +116,36 @@
   (tset lsp-servers :rnix {}))
 
 (nyoom-module-p! python
-  (tset lsp-servers :pyright {:analysis {:autoImportCompletions true :useLibraryCodeForTypes true} :disableOrganizeImports false}))
+  (tset lsp-servers :pyright {:root_dir (lsp-util.root_pattern ["pyrightconfig.json"])
+                              :settings { :python {:analysis 
+                                                    {:autoImportCompletions true
+                                                     :useLibraryCodeForTypes true 
+                                                     :disableOrganizeImports false}}}}))
 
 (nyoom-module-p! zig
   (tset lsp-servers :zls {}))
 
-((. (require :null-ls) :setup) {:sources [(require :null-ls.builtins.formatting.black)
-                                          ;; (require :null-ls.builtins.formatting.flake8)
-                                          (require :null-ls.builtins.formatting.prettier)
-                                          (require :null-ls.builtins.formatting.isort)]})
 
+;; for trickier servers you can change up the defaults
+(nyoom-module-p! lua
+  (local neodev (autoload :neodev))
+  (neodev.setup {})
+                 
+  (lsp.sumneko_lua.setup { :settings {:Lua {:diagnostics {:globals {1 :vim}}
+                                            :workspace {:library {(vim.fn.expand :$VIMRUNTIME/lua) true
+                                                                  (vim.fn.expand :$VIMRUNTIME/lua/vim/lsp) true}
+                                                        :maxPreload 100000
+                                                        :preloadFileSize 10000}}}}))
 
+(local null-ls (autoload :null-ls))
+(null-ls.setup {:sources [null-ls.builtins.formatting.black
+                          null-ls.builtins.diagnostics.flake8
+                          null-ls.builtins.formatting.prettier
+                          null-ls.builtins.formatting.isort]})
 ;; Load lsp
 (let [servers lsp-servers]
   (each [server server_config (pairs servers)]
     ((. (. lsp server) :setup) (deep-merge defaults server_config))))
 
-;; for trickier servers you can change up the defaults
-(nyoom-module-p! lua
-  (lsp.sumneko_lua.setup {:on_attach on-attach
-                          : capabilities
-                          :settings {:Lua {:diagnostics {:globals {1 :vim}}
-                                           :workspace {:library {(vim.fn.expand :$VIMRUNTIME/lua) true
-                                                                 (vim.fn.expand :$VIMRUNTIME/lua/vim/lsp) true}
-                                                       :maxPreload 100000
-                                                       :preloadFileSize 10000}}}}))
 
 {: on-attach}
