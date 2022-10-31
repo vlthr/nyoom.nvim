@@ -15,6 +15,7 @@
         :ui
         (nyoom +modes)       ; what makes Nyoom look the way it does
         dashboard            ; a nifty splash screen for neovim
+        trouble
         ;;nyoom-quit         ; WIP: buggy, terrible implementation of doom-quit. 
         vc-gutter            ; vcs diff in the fringe
         hydra                ; the heads don't byte
