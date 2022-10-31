@@ -5,14 +5,20 @@
 ;; Set leader to space by default
 (let! mapleader " ")
 
-(setup {:max_aot_targets nil
+(setup {:max_phase_one_targets nil
         :case_sensitive false
-        :character_classes [" \t\r\n"]
-        :special_keys {:repeat_search :<enter>
-                       :next_match    :<enter>
-                       :prev_match    :<tab>
-                       :next_group    :<space>
-                       :prev_group    :<tab>}})
+        :equivalence_classes [" \t\r\n"]
+        :special_keys {:repeat_search           :<enter>
+                       :next_phase_one_target   :<enter>
+                       :next_target             :<enter>
+                       :prev_target             :<tab>
+                       :next_group              :<space>
+                       :prev_group              :<tab>
+                       :multi_accept            :<enter>
+                       :multi_revert            :<backspace>}})
+                       
+        
+                       
 
 ;; Regular Leap 
 (map! [nx] :s "<Plug>(leap-forward)" {:desc "Leap Forward"})
