@@ -2,6 +2,9 @@
 (local {: autoload} (require :core.lib.autoload))
 (local vtele (autoload :vt.telescope))
 (local search-repeat-change (autoload :vt.search-repeat-change))
+(local trouble (autoload :trouble))
+(tset _G :vtf (require :vtf))
+
 (local init-commands-augroup
        (vim.api.nvim_create_augroup :init_commands {:clear true}))
 
@@ -134,15 +137,17 @@
 (map! [n] :<leader>nfc "<cmd> lua require'vt.telescope'.find_configs() <CR>"
       {:desc "find neovim config"})
 (map! [n] :<M-Down> ":m .+1<CR>==" {:desc "move down"})
-(map! [n] "]d" (fn [] (vim.diagnostic.goto_next)) {:desc "   goto_next"})
+;; (map! [n] "]d" (fn [] (vim.diagnostic.goto_next)) {:desc "   goto_next"})
+;; (map! [n] "[d" (fn []
+;;                  (vim.diagnostic.goto_prev))
+(map! [n] "[d" #(trouble.previous {:skip_groups true :jump true}))
+(map! [n] "]d" #(trouble.next {:skip_groups true :jump true}))
 (map! [n] :<M-S-Up> "V:copy .-1<CR>==" {:desc "copy up"})
 (map! [n] :<leader>ngp "<cmd> lua require'vt.telescope'.grep_nvim_plugins() <CR>"
       {:desc "grep neovim plugins"})
 (map! [n] :K (fn []
                (vim.lsp.buf.hover))
-      {:desc "   lsp hover"})
-(map! [n] "[d" (fn []
-                 (vim.diagnostic.goto_prev))
+      {:desc "   lsp hover"}
       {:desc "   goto prev"})
 (map! [n] :<C-j> :<C-w>j {:desc " window down"})
 (map! [n] :<M-Up> ":m .-2<CR>==" {:desc "move up"})
