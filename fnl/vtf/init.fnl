@@ -186,7 +186,7 @@
 (fn pr-str [...]
   (let [s (table.concat
             (map (fn [x]
-                   (view.serialise x {:one-line true}))
+                   (fennel.view.serialise x {:one-line true}))
                  [...])
             " ")]
     (if (or (nil? s) (= "" s))
@@ -331,7 +331,7 @@
 (fn serialise [...]
   (fennel.view ...))
 
-(local M {})
+(local M {: reduce : select-keys : keys : vals})
 
 (fn M.pecho [ok? ...]
   "nvim_echo vargs, as DiagnosticHint or DiagnosticError depending on ok?"
