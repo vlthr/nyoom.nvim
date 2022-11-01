@@ -310,6 +310,7 @@
 (dbg! tree)
 (var root (tree:root))
 (var ft (vim.api.nvim_buf_get_option bufnr :filetype))
+
 (local query (parse-query ft "
 (fn
   name: (symbol) @capture)
@@ -322,7 +323,7 @@
 ;;   (print a b c))
 ;; (query-bind! [[id node :node meta :metadata field :type] (query:iter_captures root bufnr)]
 ;;           (vim.treesitter.query.get_node_text node bufnr))
-(query-bind! [[id :id node :node text :text start-row :range.start-row] {:query query :root root :source bufnr}]
+(query-bind! [[id :id node :node text :text start-row :range.start-row end-row :range.end-row] {:query query :root root :source bufnr}]
             start-row)
          ;; (vim.treesitter.query.get_node_text node bufnr))
            
