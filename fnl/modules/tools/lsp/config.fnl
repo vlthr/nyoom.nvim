@@ -116,7 +116,7 @@
   (tset lsp-servers :rnix {}))
 
 (nyoom-module-p! python
-  (tset lsp-servers :pyright {:root_dir (lsp-util.root_pattern ["pyrightconfig.json"])
+  (tset lsp-servers :pyright {:root_dir (lsp-util.root_pattern [".flake8"])
                               :settings { :python {:analysis 
                                                     {:autoImportCompletions true
                                                      :useLibraryCodeForTypes true 
@@ -138,10 +138,28 @@
                                                         :preloadFileSize 10000}}}}))
 
 (local null-ls (autoload :null-ls))
+(local fennel (autoload :fennel))
+
+(fn debug-wrap [name f] (fn [...] (let [out (f ...)]
+                                    (print (string.format "%s(%s) => %s" name (fennel.view (vtf.select-keys ... [:bufname :root])) (fennel.view out)))
+                                    out)))
+(var cwd-finders {:buf-dir (fn [params] (vim.fn.fnamemodify params.bufname ":h"))
+                  :vim-cwd (fn [params] (vim.fn.getcwd))})
+;; (set cwd-finders (collect [k v (pairs cwd-finders)]
+;;                    (values k (debug-wrap k v))))
+;; (cwd-finders.buf-dir (vim.fn.expand "%"))
+
 (null-ls.setup {:sources [null-ls.builtins.formatting.black
-                          null-ls.builtins.diagnostics.flake8
+                          (null-ls.builtins.diagnostics.flake8.with {:cwd cwd-finders.vim-cwd})
                           null-ls.builtins.formatting.prettier
-                          null-ls.builtins.formatting.isort]})
+                          null-ls.builtins.formatting.isort]
+
+                ;; #{m}: message
+                ;; #{s}: source name (defaults to null-ls if not specified)
+                ;; #{c}: code (if available
+                :diagnostics_format "[#{c}] #{m} (#{s})"
+                :debug true
+                :on_attach on-attach})
 ;; Load lsp
 (let [servers lsp-servers]
   (each [server server_config (pairs servers)]
