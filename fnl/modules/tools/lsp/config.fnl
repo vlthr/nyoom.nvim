@@ -149,6 +149,55 @@
 ;;                    (values k (debug-wrap k v))))
 ;; (cwd-finders.buf-dir (vim.fn.expand "%"))
 
+
+(local nls-helpers (autoload "null-ls.helpers"))
+
+(local fnlfmt-generator
+  (nls-helpers.formatter_factory {
+                                  ;; -- string or function
+                                  :command "fnlfmt"
+                                  ;; -- function or table (optional)
+                                  :args ["-"]
+                                  ;; -- function or table of numbers (optional)
+                                  :check_exit_code nil
+                                  ;; -- function (optional)
+                                  :cwd nil
+                                  ;; -- function (optional)
+                                  :dynamic_command nil
+                                  ;; -- function or table (optional)
+                                  :env nil
+                                  ;; -- "raw", "line", "json", or "json_raw" (optional)
+                                  :format nil
+                                  ;; -- boolean (optional)
+                                  :from_stderr nil
+                                  ;; -- boolean (optional)
+                                  :from_temp_file nil
+                                  ;; -- boolean (optional)
+                                  :ignore_stderr nil
+                                  ;; -- boolean (optional)
+                                  :multiple_files nil
+                                  ;; -- function
+                                  :on_output nil
+                                  ;; -- function (optional)
+                                  :runtime_condition nil
+                                  ;; -- number (optional)
+                                  :timeout nil
+                                  ;; -- boolean (optional)
+                                  :to_stdin true
+                                  ;; -- boolean (optional)
+                                  :to_temp_file nil
+                                  ;; -- boolean (optional)
+                                  :use_cache nil}))
+               
+(local fnlfmt
+       {:name :fnlfmt
+        :generator fnlfmt-generator
+        :method null-ls.methods.FORMATTING
+        :filetypes ["fennel"]})
+        
+
+(null-ls.register [fnlfmt])
+
 (null-ls.setup {:sources [null-ls.builtins.formatting.black
                           (null-ls.builtins.diagnostics.flake8.with {:cwd cwd-finders.vim-cwd})
                           null-ls.builtins.formatting.prettier
