@@ -5,7 +5,7 @@
 (nyoom! :completion
         cmp                  ; the ultimate code completion backend
         ;;compleet           ; FIXME the *other* ultimate code completion backend
-        ;; copilot           ; the code completion of the future
+        copilot           ; the code completion of the future
         ;;fzf-lua            ; TODO a search engine for love and life
         (telescope 
           +native 
