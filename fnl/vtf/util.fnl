@@ -1,21 +1,21 @@
+(import-macros {: tbl?} :macros)
+
+(local vtf (require :vtf))
+
 (local M {})
 
 ; TODO: extract and refactor
 (fn M.map-normal [opts]
-    (vim.fn.setreg :z opts.args nil)
-    (local last-search (vim.fn.getreg "/" nil))
-    (local start-pos (vim.fn.getcurpos))
-    (vim.cmd "normal gg")
-    (var ___match___ (vim.fn.searchpos last-search :cW nil nil))
-    (while (not= (. ___match___ 1) 0)
-      (vim.cmd (.. "normal " opts.args))
-      (vim.cmd :stopinsert)
-      (set ___match___ (vim.fn.searchpos last-search :W nil nil)))
-    (vim.fn.setpos "." start-pos))
-
-  
-
-
+  (vim.fn.setreg :z opts.args nil)
+  (local last-search (vim.fn.getreg "/" nil))
+  (local start-pos (vim.fn.getcurpos))
+  (vim.cmd "normal gg")
+  (var ___match___ (vim.fn.searchpos last-search :cW nil nil))
+  (while (not= (. ___match___ 1) 0)
+    (vim.cmd (.. "normal " opts.args))
+    (vim.cmd :stopinsert)
+    (set ___match___ (vim.fn.searchpos last-search :W nil nil)))
+  (vim.fn.setpos "." start-pos))
 
 (fn M.get_marked_region [mark1 mark2 options]
   (let [bufnr 0
@@ -33,7 +33,6 @@
       (lua "return "))
     (local region (vim.region bufnr start finish regtype selection))
     (values region start finish)))
-
 
 (fn M.to_search_pattern [text opts]
   (set-forcibly! opts (or opts {}))
@@ -61,3 +60,8 @@
 
 (fn M.file_dir_or_cwd []
   (or (vim.fn.expand "%:p:h") (vim.fn.getcwd)))
+
+(fn M.set_yank [text]
+  (vim.fn.setreg text false))
+
+M

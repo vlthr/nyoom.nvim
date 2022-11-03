@@ -1,4 +1,4 @@
-;; (local vtf (require :vtf))
+(local vtf (require :vtf))
 
 (fn join [...]
   "(join xs) (join sep xs)
@@ -7,21 +7,17 @@
   Values that aren't a string or nil will go through aniseed.core/pr-str."
   (let [args [...]
         [sep xs] (if (= 2 (vtf.count args))
-                   args
-                   ["" (vtf.first args)])
+                     args
+                     ["" (vtf.first args)])
         len (vtf.count xs)]
-
     (var result [])
-
     (when (> len 0)
       (for [i 1 len]
         (let [x (. xs i)]
-          (-?>> (if
-                  (= :string (type x)) x
-                  (= nil x) x
-                  (vtf.pr-str x))
+          (-?>> (if (= :string (type x)) x
+                    (= nil x) x
+                    (vtf.pr-str x))
                 (table.insert result)))))
-
     (table.concat result sep)))
 
 (fn split [s pat]
@@ -32,18 +28,17 @@
   (while (not done?)
     (let [(start end) (string.find s pat index)]
       (if (= :nil (type start))
-        (do
-          (table.insert acc (string.sub s index))
-          (set done? true))
-        (do
-          (table.insert acc (string.sub s index (- start 1)))
-          (set index (+ end 1))))))
+          (do
+            (table.insert acc (string.sub s index))
+            (set done? true))
+          (do
+            (table.insert acc (string.sub s index (- start 1)))
+            (set index (+ end 1))))))
   acc)
 
 (fn blank? [s]
   "Check if the string is nil, empty or only whitespace."
-  (or (vtf.empty? s)
-      (not (string.find s "[^%s]"))))
+  (or (vtf.empty? s) (not (string.find s "[^%s]"))))
 
 (fn escape-pattern [s]
   "creates a lua pattern matching a literal s"
