@@ -1,0 +1,5 @@
+(local cybu (require :cybu))
+(import-macros {: map!} :macros)
+(cybu.setup)
+(map! [nv] :<tab> `((. (require :cybu) :cycle) :next :last_used))
+(map! [nv] :<S-tab> `((. (require :cybu) :cycle) :prev :last_used))

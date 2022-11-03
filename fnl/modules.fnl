@@ -29,6 +29,7 @@
         auto-session         ; automatic session saving+loading
         diffview             ; diffview
         notify              ; pretty notifications for neovim
+        cybu
 
         :editor
         ;;fold               ; (nigh) universal code folding
