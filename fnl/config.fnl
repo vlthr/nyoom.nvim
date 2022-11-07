@@ -27,10 +27,11 @@
                               :pattern "*"
                               :once true})
 
-                
 ;; (map! [nvo] :<space> "<NOP>")
+(map! [nvo] :<space> :<NOP>)
 ;; (vim.cmd "unmap <space>")
 (map! [i] :<F19> :<NOP>)
+(map! [nvsoit] :<C-i> :<C-i>)
 ;; Place your private configuration here! Remember, you do not need to run 'nyoom
 ;; sync' after modifying this file!
 
