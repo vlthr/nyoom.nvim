@@ -1,10 +1,11 @@
-(import-macros {: nyoom-module-p! : set! : augroup! : autocmd! : command!} :macros)
+(import-macros {: nyoom-module-p! : set! : augroup! : autocmd! : command!}
+               :macros)
 (local {: autoload} (require :core.lib.autoload))
 (local {: warn!} (autoload :core.lib.io))
 
 ;; Restore cursor on exit
 (augroup! restore-cursor-on-exit
-          (autocmd! VimLeave * '(set! guicursor ["a:ver100-blinkon0"])))
+          (autocmd! VimLeave * `(set! guicursor ["a:ver100-blinkon0"])))
 
 ;; Replace Packer usage
 ;; (command! PackerSync '(warn! "Please use the bin/nyoom script instead of PackerSync"))
@@ -15,18 +16,17 @@
 
 ;; improve updatetime for quicker refresh + gitsigns
 (set! updatetime 250)
-(set! timeoutlen 400)
+;; (set! timeoutlen 400)
+(set! notimeout)
 
 ;; Set shortmess
 (set! shortmess+ :cI)
 
 ;; Show whitespace characters
 (nyoom-module-p! nyoom
-  (do
-    (set! list)
-    (set! listchars {:trail "·"
-                     :tab "→ "
-                     :nbsp "·"})))
+                 (do
+                   (set! list)
+                   (set! listchars {:trail "·" :tab "→ " :nbsp "·"})))
 
 ;; Sign column
 (set! signcolumn "yes:1")
@@ -69,8 +69,7 @@
 (set! splitbelow)
 
 ;; A little more padding while scrolling
-(nyoom-module-p! nyoom
-  (set! scrolloff 4))
+(nyoom-module-p! nyoom (set! scrolloff 4))
 
 ;; Use ripgrep for the builtin grep
 (set! grepprg "rg --vimgrep")
@@ -80,11 +79,10 @@
 (set! path ["." "**"])
 
 ;; Diff-mode
-(set! diffopt [:filler :internal :indent-heuristic :algorithm:histogram])
+(set! diffopt [:filler :internal :indent-heuristic "algorithm:histogram"])
 
 ;; colorscheme
-(nyoom-module-p! nyoom
- (do
-   (set! guifont "Scientifica:h15")
-   (set! background :dark)
-   (set! termguicolors)))
+(nyoom-module-p! nyoom (do
+                         (set! guifont "Scientifica:h15")
+                         (set! background :dark)
+                         (set! termguicolors)))
